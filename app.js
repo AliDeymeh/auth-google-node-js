@@ -11,11 +11,11 @@ const hpp = require('hpp');
 const AppError = require('./utils/appError');
 
 const globalErrorHandler = require('./controllers/errorController');
-const authRouter = require('./routers/signInRouterGoogle');
-const authRouterMIC = require('./routers/signInRouterMIS');
-const authRouterGit = require('./routers/signInRouterGit');
+const authRouter = require('./routers/auth/signInRouterGoogle');
+const authRouterMIC = require('./routers/auth/signInRouterMIS');
+const authRouterGit = require('./routers/auth/signInRouterGit');
 
-// const userRouter = require('./routes/userRoutes');
+const userRouter = require('./routers/users');
 // const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
@@ -80,7 +80,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
+//!! AUTH ROUT
 app.use('/auth/google', authRouter);
 
 app.use('/auth/github', authRouterGit);
@@ -105,7 +105,7 @@ app.get('/logout', (req, res, next) => {
 // app.use('/', (req, res, next) => {
 //   console.log('req- -- - - - - - - ', req);
 // });
-// app.use('/api/v1/users', userRouter);
+app.use('/users', userRouter);
 // app.use('/api/v1/reviews', reviewRouter);
 
 app.all('*', (req, res, next) => {

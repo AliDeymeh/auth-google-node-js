@@ -18,11 +18,10 @@ exports.getAll = Model =>
 
     // SEND RESPONSE
     res.status(200).json({
-      status: 'پیدا شد',
+      status: 'success',
+      message: `اطلاعات مورد نظر یافت شد`,
       results: doc.length,
-      data: {
-        data: doc
-      }
+      data: doc
     });
   });
 exports.getOne = (Modal, popOptions) =>
