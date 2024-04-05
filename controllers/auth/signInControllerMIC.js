@@ -1,8 +1,8 @@
 const passport = require('passport');
 const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
-const User = require('../model/userModel');
-const catchAsync = require('../utils/catchAsync');
+const User = require('../../model/userModel');
+const catchAsync = require('../../utils/catchAsync');
 
 const MIC_ID = '6e619621-d903-4aa7-9b9e-de1ba8cfc8daf';
 const MIC_SECRET = '3b193387-a047-4d60-a4ab-7fc8d610f8d6';

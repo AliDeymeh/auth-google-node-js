@@ -1,7 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
-const authController = require('../../controllers/signInControllerGit');
+const authController = require('../../controllers/auth/signInControllerGit');
 
 // router.get('/success', authController.success);
 // router.get('/error', authController.error);
