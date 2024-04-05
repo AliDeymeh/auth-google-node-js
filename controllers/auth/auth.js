@@ -2,10 +2,19 @@ const jwt = require('jsonwebtoken');
 const GitHubStrategy = require('passport-github2').Strategy;
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
 const catchAsync = require('../../utils/catchAsync');
 const UserAuth = require('../../model/userModel');
 const AppError = require('../../utils/appError');
+
+passport.serializeUser(function(user, cb) {
+  cb(null, user);
+});
+
+passport.deserializeUser(function(obj, cb) {
+  cb(null, obj);
+});
 //?? This is BUILD TOKEN
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -96,13 +105,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 //??SIGN UP OR LOGIN USER FOR THE GIT
-passport.serializeUser(function(user, cb) {
-  cb(null, user);
-});
 
-passport.deserializeUser(function(obj, cb) {
-  cb(null, obj);
-});
 passport.use(
   new GitHubStrategy(
     {
@@ -144,5 +147,24 @@ exports.googleAuth = passport.authenticate('google', {
 
 exports.googleCallBack = passport.authenticate('google', {
   failureRedirect: '/'
+});
+//?? LOGIN OR SIGN UP FOR THE MICROSOFT
+
+passport.use(
+  new MicrosoftStrategy(
+    {
+      clientID: process.env.MIC_ID,
+      clientSecret: process.env.MIC_SECRET,
+      callbackURL: process.env.MIC_CALLBACK
+    },
+    function(accessToken, refreshToken, profile, done) {
+      return done(null, profile);
+    }
+  )
+);
+exports.micAuth = passport.authenticate('microsoft', { scope: 'user.read' });
+
+exports.micCallBack = passport.authenticate('microsoft', {
+  failureRedirect: '/ '
 });
 exports.createSendToken = createSendNewToken;
