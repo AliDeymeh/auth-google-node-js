@@ -10,15 +10,16 @@ const userAuthSchema = new mongoose.Schema({
   customId: String,
   email: {
     type: String,
-    required: [true, 'Please provide your email'],
-    unique: true,
+    required: [true, 'ایمیل را وارد کنید'],
+    unique: [true, 'این ایمیل از قبل ثبت شده است '],
+
     lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email']
+    validate: [validator.isEmail, 'لطفا ایمیل را به درستی وارد نمایید']
   },
   familyName: String,
   givenName: String,
   photos: String,
-  provider: String,
+  provider: { type: String, default: 'selfSignUp' },
   password: {
     type: String,
     required: [true, 'لطفا رمز عبور را به درستی وارد نمایید   '],
@@ -48,6 +49,7 @@ userAuthSchema.pre('save', async function(next) {
   this.passwordConfirm = undefined;
   next();
 });
+
 userAuthSchema.methods.correctPassword = async function(
   candidatePassword,
   userPassword
