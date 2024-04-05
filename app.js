@@ -8,10 +8,10 @@ const passport = require('passport');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 
-const AppError = require('./utils/appError');
+const AppError = require('./services/appError');
 
-const globalErrorHandler = require('./controllers/errorController');
-const authRouter = require('./routers/auth/index');
+// const globalErrorHandler = require('./controllers/errorController');
+const authRouter = require('./routers/auth');
 
 const userRouter = require('./routers/users');
 // const reviewRouter = require('./routes/reviewRoutes');
@@ -109,6 +109,6 @@ app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-app.use(globalErrorHandler);
+// app.use(globalErrorHandler);
 
 module.exports = app;

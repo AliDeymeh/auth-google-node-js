@@ -1,6 +1,7 @@
-const APIFeatures = require('../utils/apiFeatures');
-const AppError = require('../utils/appError');
-const catchAsync = require('../utils/catchAsync');
+const APIFeatures = require('./serviceApiFeatures');
+
+const AppError = require('./appError');
+const catchAsync = require('./catchAsync');
 
 exports.getAll = Model =>
   catchAsync(async (req, res, next) => {
@@ -33,7 +34,7 @@ exports.getOne = (Modal, popOptions) =>
     const doc = await query;
 
     if (!doc) {
-      return next(new AppError('No doc found with that ID', 404));
+      return next(new AppError('اطلاعاتی با این ایدی یافت نشد', 404));
     }
 
     res.status(200).json({
@@ -44,23 +45,32 @@ exports.getOne = (Modal, popOptions) =>
     });
   });
 
-exports.createOne = Modal =>
+exports.getOneForFilter = (Modal, filter, data) => {
+  let query;
+  let doc;
+  catchAsync(async function() {
+    query = Modal.findOne({ filter: data });
+    doc = await query;
+  });
+  return doc;
+};
+
+exports.createOne = (Modal, data) =>
   catchAsync(async (req, res, next) => {
-    const newData = await Modal.create(req.body);
+    const newData = await Modal.create(data);
 
     res.status(201).json({
       status: 'success',
-      data: {
-        data: newData
-      }
+      data: newData
     });
   });
+
 exports.deleteOne = Modal =>
   catchAsync(async (req, res, next) => {
     const doc = await Modal.findByIdAndDelete(req.params.id);
 
     if (!doc) {
-      return next(new AppError('no document found with id', 404));
+      return next(new AppError('اطلاعاتی با این ایدی یافت نشد', 404));
     }
     res.status(204).json({
       status: 'success',
@@ -76,13 +86,11 @@ exports.updateOne = Modal =>
     });
 
     if (!doc) {
-      return next(new AppError('No document found with that ID', 404));
+      return next(new AppError('اطلاعاتی با این ایدی یافت نشد', 404));
     }
 
     res.status(200).json({
       status: 'success',
-      data: {
-        data: doc
-      }
+      data: doc
     });
   });

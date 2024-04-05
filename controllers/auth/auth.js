@@ -1,12 +1,13 @@
-const jwt = require('jsonwebtoken');
 const GitHubStrategy = require('passport-github2').Strategy;
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
-const catchAsync = require('../../utils/catchAsync');
+const catchAsync = require('../../services/catchAsync');
 const UserAuth = require('../../model/userModel');
-const AppError = require('../../utils/appError');
+const AppError = require('../../services/appError');
+const { saveDataUser } = require('../../services/saveData');
+const { createSendNewToken } = require('../../services/createToken');
 
 passport.serializeUser(function(user, cb) {
   cb(null, user);
@@ -15,69 +16,8 @@ passport.serializeUser(function(user, cb) {
 passport.deserializeUser(function(obj, cb) {
   cb(null, obj);
 });
-//?? This is BUILD TOKEN
-const signToken = id => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
-  });
-};
-//?? BUILD TOKEN USER
-const createSendNewToken = (user, statusCode, res, message) => {
-  const token = signToken(user._id);
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    ),
-    httpOnly: true
-  };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
-  res.cookie('token', token, cookieOptions);
-
-  // Remove password from output
-  user.password = undefined;
-
-  res.status(statusCode).json({
-    status: 'success',
-    token,
-    message,
-    data: user
-  });
-};
-//??SIGN UP SELF USER
-exports.signup = catchAsync(async (req, res, next) => {
-  const data = {
-    displayName: req.body.displayName,
-    customId: Math.floor(10000000 + Math.random() * 90000000).toString(),
-    familyName: req.body.familyName,
-    givenName: req.body.givenName,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm
-  };
-  if (!data.email)
-    return next(new AppError('ایمیل برای ساخت کاربر الزامی می باشد', 400));
-  const user = await UserAuth.findOne({ email: data.email });
-  if (user) {
-    return next(
-      new AppError('کاربری با این مشخصات قبلا ثبت نام شده است ', 400)
-    );
-  }
-  if (!user) {
-    if (!data.password || !data.passwordConfirm)
-      return next(new AppError('رمز عبور الزامی می باشد', 400));
-    if (!data.password !== !data.passwordConfirm)
-      return next(
-        new AppError(
-          'رمز عبور با تایید رمز عبور برابر نیستند مجدد امتحان کنید',
-          400
-        )
-      );
-
-    const newUser = await UserAuth.create(data);
-    createSendNewToken(newUser, 201, res, 'با موفقیت کاربر ساخته شده');
-  }
-});
+exports.signup = saveDataUser;
 //?? LOGIN USER
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -167,4 +107,3 @@ exports.micAuth = passport.authenticate('microsoft', { scope: 'user.read' });
 exports.micCallBack = passport.authenticate('microsoft', {
   failureRedirect: '/ '
 });
-exports.createSendToken = createSendNewToken;

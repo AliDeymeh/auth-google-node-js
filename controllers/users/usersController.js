@@ -1,10 +1,10 @@
 //!!user controller
 const User = require('../../model/userModel');
 
-const AppError = require('../../utils/appError');
+const AppError = require('../../services/appError');
 // const APIFeatures = require('./../utils/apiFeatures');
-const catchAsync = require('../../utils/catchAsync');
-const factory = require('../handlerFactory');
+const catchAsync = require('../../services/catchAsync');
+const factory = require('../../services/handlerFactory');
 
 exports.getAllUsers = factory.getAll(User);
 const filterObj = (Obj, ...allowedFiled) => {
