@@ -18,6 +18,6 @@ router.get('/google/', authController.googleAuth);
 router.get('/google/callback', authController.googleCallBack, saveDataUser);
 
 //??login or sign up fot the microsoft
-router.get('/google/', authController.micAuth);
-router.get('/google/callback', authController.micCallBack, saveDataUser);
+router.get('/microsoft/', authController.micAuth);
+router.get('/microsoft/callback', authController.micCallBack, saveDataUser);
 module.exports = router;

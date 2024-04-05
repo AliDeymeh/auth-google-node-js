@@ -4,7 +4,6 @@ const { createSendToken } = require('./auth');
 
 exports.saveDataUser = catchAsync(async (req, res, next) => {
   const emailUser = req.user.emails[0].value;
-  console.log(' req.user.emails[0].value', req.user.emails[0].value);
 
   const user = await UserAuth.findOne({ email: emailUser });
   if (user) {
