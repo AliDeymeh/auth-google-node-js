@@ -11,9 +11,7 @@ const hpp = require('hpp');
 const AppError = require('./utils/appError');
 
 const globalErrorHandler = require('./controllers/errorController');
-const authRouter = require('./routers/auth/signInRouterGoogle');
-const authRouterMIC = require('./routers/auth/signInRouterMIS');
-const authRouterGit = require('./routers/auth/signInRouterGit');
+const authRouter = require('./routers/auth/index');
 
 const userRouter = require('./routers/users');
 // const reviewRouter = require('./routes/reviewRoutes');
@@ -35,7 +33,7 @@ const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in an hour!'
 });
-app.use('/api', limiter);
+app.use('/', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
@@ -81,10 +79,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 //!! AUTH ROUT
-app.use('/auth/google', authRouter);
+app.use('/auth', authRouter);
 
-app.use('/auth/github', authRouterGit);
-app.use('/auth/microsoft', authRouterMIC);
+// app.use('/auth/microsoft', authRouterMIC);
 app.get('/profile', (req, res) => {
   if (req.isAuthenticated()) {
     res.send(`<h1>you are logged in </h1>
