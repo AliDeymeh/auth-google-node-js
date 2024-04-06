@@ -1,11 +1,11 @@
 const express = require('express');
 const authController = require('../../controllers/auth/auth');
-const { saveDataUser } = require('../../services/saveData');
+const { saveDataUser, uploadFileSingle } = require('../../services/saveData');
 
 const router = express.Router();
 
 router.post('/login', authController.login);
-router.post('/sign-up', authController.signup);
+router.post('/sign-up', uploadFileSingle, authController.signup);
 
 //??login or sign up fot the git
 

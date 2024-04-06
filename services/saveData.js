@@ -1,8 +1,38 @@
+const multer = require('multer');
+
 const UserAuth = require('../model/userModel');
 const catchAsync = require('./catchAsync');
-
-// const factory = require('./handlerFactory');
 const AppError = require('./appError');
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/img/user');
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `user-${Date.now()}.${ext}`);
+  }
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.split('/')[0] === 'image') {
+    cb(null, true);
+  } else {
+    cb(
+      new AppError(
+        'فایل ارسال شده عکس نمی باشد لطفا مجددا بارگزاری فرمایید',
+        400
+      ),
+      false
+    );
+  }
+};
+const uploaderFile = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+exports.uploadFileSingle = uploaderFile.single('photo');
+// const factory = require('./handlerFactory');
 const { createSendNewToken } = require('./createToken');
 
 // const saveNewData = data => {
@@ -13,7 +43,7 @@ exports.saveDataUser = catchAsync(async (req, res, next) => {
   const emailUser = user ? req.user.emails[0].value : req.body.email;
 
   const doc = await UserAuth.findOne({ email: emailUser });
-
+  console.log('req.file', req.file);
   if (doc && user) {
     createSendNewToken(doc, 200, res, 'ورود با موفقیت انجام شد');
   }
@@ -39,7 +69,7 @@ exports.saveDataUser = catchAsync(async (req, res, next) => {
           ? req.user.name.givenName
           : req.user.givenName
         : req.body.givenName,
-
+      photos: user ? req.user.photo : req.file.filename,
       provider: user ? req.user.provider : 'selfSignUp',
       email: user ? emailUser : req.body.email,
       password: user ? '12345678' : req.body.password,
