@@ -34,7 +34,7 @@ exports.getOne = (Modal, popOptions) =>
     const doc = await query;
 
     if (!doc) {
-      return next(new AppError('اطلاعاتی با این ایدی یافت نشد', 404));
+      return AppError('failed', 404, res, 'اطلاعات مورد نظر یافت نشد');
     }
 
     res.status(200).json({
@@ -70,7 +70,7 @@ exports.deleteOne = Modal =>
     const doc = await Modal.findByIdAndDelete(req.params.id);
 
     if (!doc) {
-      return next(new AppError('اطلاعاتی با این ایدی یافت نشد', 404));
+      return AppError('failed', 404, res, 'اطلاعات مورد نظر یافت نشد');
     }
     res.status(204).json({
       status: 'success',
@@ -86,7 +86,7 @@ exports.updateOne = Modal =>
     });
 
     if (!doc) {
-      return next(new AppError('اطلاعاتی با این ایدی یافت نشد', 404));
+      return AppError('failed', 404, res, 'اطلاعات مورد نظر یافت نشد');
     }
 
     res.status(200).json({

@@ -24,19 +24,22 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // 1) Check if email and password exist
   if (!email) {
-    return next(new AppError('لطفا ایمیل را به درستی وارد نمایید', 400));
+    return AppError('failed', 400, res, 'ایمیل اجباری می باشد');
   }
   if (!password) {
-    return next(new AppError('لطفا رمز عبور را به درستی وارد نمایید', 400));
+    return AppError('failed', 400, res, 'رمز عبور را وارد نمایید');
   }
   // 2) Check if user exists && password is correct
   const user = await UserAuth.findOne({ email }).select('+password');
   if (!user) {
-    return next(new AppError('کاربری با مشخصات وارد شده یافت نشد', 400));
+    return AppError('failed', 404, res, 'کاربر مورد نظر یافت نشد');
   }
   if (user || !(await user.correctPassword(password, user.password))) {
-    return next(
-      new AppError('رمز  عبور وراد شده اشتباه می باشد.مجددا امتحان کنید', 401)
+    return AppError(
+      'failed',
+      400,
+      res,
+      'رمز عبور یا نام کاربری اشتباه می باشد'
     );
   }
 

@@ -18,8 +18,11 @@ exports.saveDataUser = catchAsync(async (req, res, next) => {
     createSendNewToken(doc, 200, res, 'ورود با موفقیت انجام شد');
   }
   if (doc && !user) {
-    return next(
-      new AppError('کاربری با این مشخصات قبلا ثبت نام شده است ', 400)
+    return AppError(
+      'failed',
+      400,
+      res,
+      'با این ایمیل کاربری وجود دارد مجددا امتحان کنید'
     );
   }
 
@@ -47,13 +50,20 @@ exports.saveDataUser = catchAsync(async (req, res, next) => {
     };
 
     if (!data.password || !data.passwordConfirm) {
-      return next(new AppError('رمز عبور الزامی می باشد', 400));
+      return AppError(
+        'failed',
+        400,
+        res,
+        'رمز عبور با تایید رمز عبور الزامی می باشد  مجدد امتحان کنید'
+      );
     }
     if (data.password !== data.passwordConfirm) {
       return next(
-        new AppError(
-          'رمز عبور با تایید رمز عبور برابر نیستند مجدد امتحان کنید',
-          400
+        AppError(
+          'failed',
+          400,
+          res,
+          'رمز عبور با تایید رمز عبور برابر نیستند مجدد امتحان کنید'
         )
       );
     }

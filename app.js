@@ -7,7 +7,7 @@ const session = require('express-session');
 const passport = require('passport');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-
+const cors = require('cors');
 const AppError = require('./services/appError');
 
 // const globalErrorHandler = require('./controllers/errorController');
@@ -17,7 +17,7 @@ const userRouter = require('./routers/users');
 // const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
-
+app.use(cors());
 // 1) GLOBAL MIDDLEWARES
 // Set security HTTP headers
 app.use(helmet());
@@ -106,7 +106,7 @@ app.use('/users', userRouter);
 // app.use('/api/v1/reviews', reviewRouter);
 
 app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  AppError('failed', 404, res, `ادرس ${req.originalUrl} وجود ندارد`);
 });
 
 // app.use(globalErrorHandler);

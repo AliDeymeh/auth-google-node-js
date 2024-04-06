@@ -16,7 +16,9 @@ router.get('/github/callback', authController.gitCallBack, saveDataUser);
 
 router.get('/google/', authController.googleAuth);
 router.get('/google/callback', authController.googleCallBack, saveDataUser);
-
+// router.get('/google/callback', authController.googleCallBack, (req, res) => {
+//   res.redirect('/login');
+// });
 //??login or sign up fot the microsoft
 router.get('/microsoft/', authController.micAuth);
 router.get('/microsoft/callback', authController.micCallBack, saveDataUser);
